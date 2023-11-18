@@ -5,7 +5,7 @@ dependencies:
   - python=3.8
   - pytorch=1.9
   - torchvision
-  - cudatoolkit=11.1
+  - cudatoolkit
   - pip
   - pip:
     - termcolor
