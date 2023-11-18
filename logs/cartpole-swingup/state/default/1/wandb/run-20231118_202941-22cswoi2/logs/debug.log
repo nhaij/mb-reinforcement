@@ -1,0 +1,30 @@
+2023-11-18 20:29:41,275 INFO    MainThread:907442 [wandb_setup.py:_flush():76] Current SDK version is 0.16.0
+2023-11-18 20:29:41,275 INFO    MainThread:907442 [wandb_setup.py:_flush():76] Configure stats pid to 907442
+2023-11-18 20:29:41,275 INFO    MainThread:907442 [wandb_setup.py:_flush():76] Loading settings from /export/home/3schmohl/.config/wandb/settings
+2023-11-18 20:29:41,275 INFO    MainThread:907442 [wandb_setup.py:_flush():76] Loading settings from /informatik1/students/home/3schmohl/PycharmProjects/mb-reinforcement/wandb/settings
+2023-11-18 20:29:41,275 INFO    MainThread:907442 [wandb_setup.py:_flush():76] Loading settings from environment variables: {'api_key': '***REDACTED***', 'silent': 'true'}
+2023-11-18 20:29:41,275 INFO    MainThread:907442 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2023-11-18 20:29:41,275 INFO    MainThread:907442 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program_relpath': 'src/train.py', 'program_abspath': '/informatik1/students/home/3schmohl/PycharmProjects/mb-reinforcement/src/train.py', 'program': 'src/train.py'}
+2023-11-18 20:29:41,275 INFO    MainThread:907442 [wandb_init.py:_log_setup():524] Logging user logs to /informatik1/students/home/3schmohl/PycharmProjects/mb-reinforcement/logs/cartpole-swingup/state/default/1/wandb/run-20231118_202941-22cswoi2/logs/debug.log
+2023-11-18 20:29:41,275 INFO    MainThread:907442 [wandb_init.py:_log_setup():525] Logging internal logs to /informatik1/students/home/3schmohl/PycharmProjects/mb-reinforcement/logs/cartpole-swingup/state/default/1/wandb/run-20231118_202941-22cswoi2/logs/debug-internal.log
+2023-11-18 20:29:41,275 INFO    MainThread:907442 [wandb_init.py:init():564] calling init triggers
+2023-11-18 20:29:41,275 INFO    MainThread:907442 [wandb_init.py:init():571] wandb.init called with sweep_config: {}
+config: {'task': 'cartpole-swingup', 'modality': 'state', 'action_repeat': 8, 'discount': 0.99, 'episode_length': 125, 'train_steps': 1250, 'iterations': 6, 'num_samples': 512, 'num_elites': 64, 'mixture_coef': 0.05, 'min_std': 0.05, 'temperature': 0.5, 'momentum': 0.1, 'batch_size': 512, 'max_buffer_size': 1000000, 'horizon': 5, 'reward_coef': 0.5, 'value_coef': 0.1, 'consistency_coef': 2, 'rho': 0.5, 'kappa': 0.1, 'lr': 0.001, 'std_schedule': 'linear(0.5, 0.05, 25000)', 'horizon_schedule': 'linear(1, 5, 25000)', 'per_alpha': 0.6, 'per_beta': 0.4, 'grad_clip_norm': 10, 'seed_steps': 5000, 'update_freq': 2, 'tau': 0.01, 'enc_dim': 256, 'mlp_dim': 512, 'latent_dim': 50, 'use_wandb': True, 'wandb_project': 'mb-reinforcement', 'wandb_entity': 'marvin-schmohl', 'seed': 1, 'exp_name': 'default', 'eval_freq': 20000, 'eval_episodes': 10, 'save_video': True, 'save_model': True, 'task_title': 'Cartpole Swingup', 'device': 'cuda', 'obs_shape': [5], 'action_shape': [1], 'action_dim': 1}
+2023-11-18 20:29:41,275 INFO    MainThread:907442 [wandb_init.py:init():614] starting backend
+2023-11-18 20:29:41,275 INFO    MainThread:907442 [wandb_init.py:init():618] setting up manager
+2023-11-18 20:29:41,277 INFO    MainThread:907442 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2023-11-18 20:29:41,280 INFO    MainThread:907442 [wandb_init.py:init():624] backend started and connected
+2023-11-18 20:29:41,284 INFO    MainThread:907442 [wandb_init.py:init():716] updated telemetry
+2023-11-18 20:29:41,308 INFO    MainThread:907442 [wandb_init.py:init():749] communicating run to backend with 90.0 second timeout
+2023-11-18 20:29:41,708 INFO    MainThread:907442 [wandb_run.py:_on_init():2254] communicating current version
+2023-11-18 20:29:42,099 INFO    MainThread:907442 [wandb_run.py:_on_init():2263] got version response 
+2023-11-18 20:29:42,099 INFO    MainThread:907442 [wandb_init.py:init():800] starting run threads in backend
+2023-11-18 20:29:42,204 INFO    MainThread:907442 [wandb_run.py:_console_start():2233] atexit reg
+2023-11-18 20:29:42,204 INFO    MainThread:907442 [wandb_run.py:_redirect():2088] redirect: wrap_raw
+2023-11-18 20:29:42,204 INFO    MainThread:907442 [wandb_run.py:_redirect():2153] Wrapping output streams.
+2023-11-18 20:29:42,204 INFO    MainThread:907442 [wandb_run.py:_redirect():2178] Redirects installed.
+2023-11-18 20:29:42,205 INFO    MainThread:907442 [wandb_init.py:init():841] run started, returning control to user process
+2023-11-18 20:29:54,218 INFO    MainThread:907442 [wandb_run.py:_finish():1962] finishing run marvin-schmohl/mb-reinforcement/22cswoi2
+2023-11-18 20:29:54,218 INFO    MainThread:907442 [wandb_run.py:_atexit_cleanup():2202] got exitcode: 0
+2023-11-18 20:29:54,218 INFO    MainThread:907442 [wandb_run.py:_restore():2185] restore
+2023-11-18 20:29:54,218 INFO    MainThread:907442 [wandb_run.py:_restore():2191] restore done

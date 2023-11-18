@@ -1,0 +1,18 @@
+[34m[1mLogs will be synced with wandb.
+ [34mtrain[39m   [30mE:[39m 1                [30mS:[39m 0                [30mR:[39m 118.7            [30mT:[39m 0:00:00
+Traceback (most recent call last):
+  File "src/train.py", line 98, in <module>
+    train(parse_cfg(Path().cwd() / __CONFIG__))
+  File "src/train.py", line 90, in train
+    common_metrics['episode_reward'] = evaluate(env, agent, cfg.eval_episodes, step, env_step, L.video)
+  File "src/train.py", line 43, in evaluate
+    if video: video.save(env_step)
+  File "/informatik1/students/home/3schmohl/PycharmProjects/mb-reinforcement/src/logger.py", line 76, in save
+    self._wandb.log({'eval_video': self._wandb.Video(frames, fps=self.fps, format='mp4')}, step=step)
+  File "/informatik1/students/home/3schmohl/miniconda3/envs/tdmpc/lib/python3.8/site-packages/wandb/sdk/data_types/video.py", line 128, in __init__
+    self.encode()
+  File "/informatik1/students/home/3schmohl/miniconda3/envs/tdmpc/lib/python3.8/site-packages/wandb/sdk/data_types/video.py", line 131, in encode
+    mpy = util.get_module(
+  File "/informatik1/students/home/3schmohl/miniconda3/envs/tdmpc/lib/python3.8/site-packages/wandb/util.py", line 269, in get_module
+    raise wandb.Error(required)
+wandb.errors.Error: wandb.Video requires moviepy and imageio when passing raw data.  Install with "pip install moviepy imageio"
