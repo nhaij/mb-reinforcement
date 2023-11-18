@@ -3,6 +3,7 @@ warnings.filterwarnings('ignore')
 import os
 os.environ['MKL_SERVICE_FORCE_INTEL'] = '1'
 os.environ['MUJOCO_GL'] = 'egl'
+os.environ['WANDB_API_KEY'] = '612b7ec02eca43827b875e93410cec24c8996fb1'
 import torch
 import numpy as np
 import gym
