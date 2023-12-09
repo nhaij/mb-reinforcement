@@ -47,6 +47,38 @@ class TOLD(nn.Module):
 		x = torch.cat([z, a], dim=-1)
 		return self._Q1(x), self._Q2(x)
 
+	def intrinsic_reward(self, z_predicted, z_actual):
+		"""Simple curiosity-based intrinsic reward."""
+		# Check and adjust shapes if needed
+
+		#make z_predicted smaller
+
+		z_actual = z_actual.view(z_predicted.shape)
+
+		# Calculate prediction error between predicted and actual latent states
+		prediction_error = torch.mean(torch.abs(z_predicted - z_actual))
+		# Normalize the error or apply any scaling if needed
+		return prediction_error
+
+	def get_total_reward(self, intrinsic_reward, extrinsic_reward, extrinsic_coeff=0.8):
+		"""Combine intrinsic and extrinsic rewards with a weighted sum."""
+		total_reward = extrinsic_coeff * extrinsic_reward + (1 - extrinsic_coeff) * intrinsic_reward
+		return total_reward
+
+	# Modify the 'next' method to incorporate intrinsic rewards
+	def next_with_intrinsic_reward(self, z, a, z_actual):
+		"""Predicts next latent state (d) and calculates both intrinsic and extrinsic rewards."""
+		x = torch.cat([z, a], dim=-1)
+		z_predicted, extrinsic_reward = self.next(z, a)  # Get predicted latent state and extrinsic reward
+		# Check shapes of z_predicted and z_actual
+		print("Shapes:", z_predicted.shape, z_actual.shape)  # Add this line to inspect the shapes
+
+		# Calculate intrinsic reward based on prediction error
+		intrinsic_reward = self.intrinsic_reward(z_predicted, z_actual)
+		# Calculate total reward by combining intrinsic and extrinsic rewards
+		total_reward = self.get_total_reward(intrinsic_reward, extrinsic_reward)
+		return z_predicted, total_reward
+
 
 class TDMPC():
 	"""Implementation of TD-MPC learning + inference."""
@@ -187,31 +219,43 @@ class TDMPC():
 		z = self.model.h(self.aug(obs))
 		zs = [z.detach()]
 
+		# Initialize intrinsic_reward_loss
+		intrinsic_reward_loss = 0
+
 		consistency_loss, reward_loss, value_loss, priority_loss = 0, 0, 0, 0
 		for t in range(self.cfg.horizon):
 
-			# Predictions
-			Q1, Q2 = self.model.Q(z, action[t])
-			z, reward_pred = self.model.next(z, action[t])
+			# Predictions using next_with_intrinsic_reward
+			z_pred, total_reward = self.model.next_with_intrinsic_reward(z, action[t], self.aug(next_obses[t]))
 			with torch.no_grad():
 				next_obs = self.aug(next_obses[t])
 				next_z = self.model_target.h(next_obs)
 				td_target = self._td_target(next_obs, reward[t])
 			zs.append(z.detach())
 
+			# Calculate intrinsic reward here
+			intrinsic_reward = self.model.intrinsic_reward(z, next_z)
+
 			# Losses
 			rho = (self.cfg.rho ** t)
-			consistency_loss += rho * torch.mean(h.mse(z, next_z), dim=1, keepdim=True)
-			reward_loss += rho * h.mse(reward_pred, reward[t])
-			value_loss += rho * (h.mse(Q1, td_target) + h.mse(Q2, td_target))
-			priority_loss += rho * (h.l1(Q1, td_target) + h.l1(Q2, td_target))
+			consistency_loss += rho * torch.mean(h.mse(z_pred, next_z), dim=1, keepdim=True)
+			reward_loss += rho * h.mse(total_reward, reward[t])
+			value_loss += rho * h.mse(self.model.Q(z, action[t]), td_target)
+			priority_loss += rho * h.l1(self.model.Q(z, action[t]), td_target)
+			# Add the intrinsic reward term to the loss
+			intrinsic_reward_loss += rho * h.mse(intrinsic_reward, 0)  # Modify to include intrinsic_reward_loss
+
+			z = z_pred  # Update z for the next step
 
 		# Optimize model
-		total_loss = self.cfg.consistency_coef * consistency_loss.clamp(max=1e4) + \
-					 self.cfg.reward_coef * reward_loss.clamp(max=1e4) + \
-					 self.cfg.value_coef * value_loss.clamp(max=1e4)
+		total_loss = (
+				self.cfg.consistency_coef * consistency_loss.clamp(max=1e4) +
+				self.cfg.reward_coef * reward_loss.clamp(max=1e4) +
+				self.cfg.value_coef * value_loss.clamp(max=1e4) +
+				self.cfg.intrinsic_reward_coef * intrinsic_reward_loss.clamp(max=1e4)  # Add intrinsic_reward_loss term
+		)
 		weighted_loss = (total_loss.squeeze(1) * weights).mean()
-		weighted_loss.register_hook(lambda grad: grad * (1/self.cfg.horizon))
+		weighted_loss.register_hook(lambda grad: grad * (1 / self.cfg.horizon))
 		weighted_loss.backward()
 		grad_norm = torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.cfg.grad_clip_norm, error_if_nonfinite=False)
 		self.optim.step()
@@ -223,10 +267,14 @@ class TDMPC():
 			h.ema(self.model, self.model_target, self.cfg.tau)
 
 		self.model.eval()
-		return {'consistency_loss': float(consistency_loss.mean().item()),
-				'reward_loss': float(reward_loss.mean().item()),
-				'value_loss': float(value_loss.mean().item()),
-				'pi_loss': pi_loss,
-				'total_loss': float(total_loss.mean().item()),
-				'weighted_loss': float(weighted_loss.mean().item()),
-				'grad_norm': float(grad_norm)}
+		return {
+			'consistency_loss': float(consistency_loss.mean().item()),
+			'reward_loss': float(reward_loss.mean().item()),
+			'value_loss': float(value_loss.mean().item()),
+			# Include intrinsic_reward_loss in the returned dictionary
+			'intrinsic_reward_loss': float(intrinsic_reward_loss.mean().item()),
+			'pi_loss': pi_loss,
+			'total_loss': float(total_loss.mean().item()),
+			'weighted_loss': float(weighted_loss.mean().item()),
+			'grad_norm': float(grad_norm)
+		}
