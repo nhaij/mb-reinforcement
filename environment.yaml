@@ -10,9 +10,10 @@ dependencies:
   - pip:
     - termcolor
     - omegaconf
-    - gym==0.21.0
-    - dm-control==0.0.403778684
+    - gym
+    - dm-control
     - pandas
     - wandb
     - moviepy
     - imageio
+    - gym
