@@ -18,7 +18,7 @@ from algorithm.helper import Episode, ReplayBuffer
 import logger
 torch.backends.cudnn.benchmark = True
 __CONFIG__, __LOGS__ = 'cfgs', 'logs'
-
+__DM_CONTROL__ = 'dm_control'
 
 def set_seed(seed):
 	random.seed(seed)
@@ -48,7 +48,7 @@ def train(cfg):
 	"""Training script for TD-MPC. Requires a CUDA-enabled device."""
 	assert torch.cuda.is_available()
 	set_seed(cfg.seed)
-	work_dir = Path().cwd() / __LOGS__ / cfg.task / cfg.modality / cfg.exp_name / str(cfg.seed)
+	work_dir = Path().cwd() / __LOGS__ / cfg.task / cfg.modality / cfg.exp_name / str(cfg.seed) / __DM_CONTROL__
 	env, agent, buffer = make_env(cfg), TDMPC(cfg), ReplayBuffer(cfg)
 	
 	# Run training

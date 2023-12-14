@@ -3,9 +3,9 @@ from typing import Any, NamedTuple
 import dm_env
 import numpy as np
 import sys
-sys.path.append('dm_control')
-from dm_control import suite
-from dm_control.suite.wrappers import action_scale, pixels
+#sys.path.append('dm_control')
+#from dm_control import suite
+#from dm_control.suite.wrappers import action_scale, pixels
 from dm_env import StepType, specs
 import gym
 import warnings
@@ -250,25 +250,7 @@ class DefaultDictWrapper(gym.Wrapper):
 
 	def step(self, action):
 		obs, reward, done, info = self.env.step(action)
-		return obs, reward, done, defaultdict(float, info)
-
-# Überschreiben der get_reward Method
-def get_reward(self, physics):
-	"""Returns a reward to the agent."""
-	standing = rewards.tolerance(physics.torso_height(),
-								 bounds=(_STAND_HEIGHT, float('inf')),
-								 margin=_STAND_HEIGHT / 2)
-	upright = (1 + physics.torso_upright()) / 2
-	stand_reward = (3 * standing + upright) / 4
-	if self._move_speed == 0:
-		return stand_reward
-	else:
-		move_reward = rewards.tolerance(physics.horizontal_velocity(),
-										bounds=(self._move_speed, float('inf')),
-										margin=self._move_speed / 2,
-										value_at_margin=0.5,
-										sigmoid='linear')
-		return stand_reward * (5 * move_reward + 1) / 6
+		return obs, reward, done,
 
 def make_env(cfg):
 	"""
