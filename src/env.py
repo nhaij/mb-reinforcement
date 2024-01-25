@@ -2,6 +2,8 @@ from collections import deque, defaultdict
 from typing import Any, NamedTuple
 import dm_env
 import numpy as np
+import sys
+sys.path.append('dm_control')
 from dm_control import suite
 from dm_control.suite.wrappers import action_scale, pixels
 from dm_env import StepType, specs
@@ -249,7 +251,6 @@ class DefaultDictWrapper(gym.Wrapper):
 	def step(self, action):
 		obs, reward, done, info = self.env.step(action)
 		return obs, reward, done, defaultdict(float, info)
-
 
 def make_env(cfg):
 	"""
